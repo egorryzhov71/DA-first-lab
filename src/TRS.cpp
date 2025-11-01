@@ -91,7 +91,7 @@ void Trapezoid::printVertices(std::ostream& os) const{
 }
 
 void Trapezoid::readData(std::istream& is){
-    std::cout << "Enter Square (center_x center y side) :";
+    std::cout << "Enter Trapezoid (center_x center_y base1 base2 height):";
     is >> x >> y >> base1 >> base2 >> height;
 }
 
@@ -130,7 +130,7 @@ bool Trapezoid::operator==(const Figure& other) const {
     if (other_Trapezoid == nullptr){
         return false;
     }
-    return (x == other_Trapezoid -> x) && (y == other_Trapezoid -> y) && (base1 == other_Trapezoid -> base2) &&
+    return (x == other_Trapezoid -> x) && (y == other_Trapezoid -> y) && (base1 == other_Trapezoid -> base1) &&
     (base2 == other_Trapezoid -> base2) && (height == other_Trapezoid -> height);
 }
 
@@ -194,4 +194,109 @@ bool Rectangle::operator==(const Figure& other) const {
            (y == otherRect->y) && 
            (width == otherRect->width) && 
            (height == otherRect->height);
+}
+
+
+Array::Array() : capacity(10), size(0) {
+    data = new Figure*[capacity];
+    for (int i = 0; i < capacity; i++) {
+        data[i] = nullptr;
+    }
+}
+
+Array::Array(const Array& other) : capacity(other.capacity), size(other.size) {
+    data = new Figure*[capacity];
+    for (int i = 0; i < size; i++) {
+        // Создаем копии фигур (нужно реализовать клонирование)
+        // Пока просто копируем указатели (осторожно с владением!)
+        data[i] = other.data[i];
+    }
+    for (int i = size; i < capacity; i++) {
+        data[i] = nullptr;
+    }
+}
+
+Array& Array::operator=(const Array& other) {
+    if (this != &other) {
+        // Освобождаем старую память
+        clear();
+        delete[] data;
+        
+        // Копируем данные
+        capacity = other.capacity;
+        size = other.size;
+        data = new Figure*[capacity];
+        for (int i = 0; i < size; i++) {
+            data[i] = other.data[i];
+        }
+        for (int i = size; i < capacity; i++) {
+            data[i] = nullptr;
+        }
+    }
+    return *this;
+}
+
+Array::~Array() {
+    clear();
+    delete[] data;
+}
+
+void Array::resize() {
+    int newCapacity = capacity * 2;
+    Figure** newData = new Figure*[newCapacity];
+    
+    for (int i = 0; i < size; i++) {
+        newData[i] = data[i];
+    }
+    
+    for (int i = size; i < newCapacity; i++) {
+        newData[i] = nullptr;
+    }
+    
+    delete[] data;
+    data = newData;
+    capacity = newCapacity;
+}
+
+void Array::push_back(Figure* figure) {
+    if (size >= capacity) {
+        resize(); 
+    }
+    data[size] = figure;
+    size++;
+}
+
+void Array::erase(int index) {
+    if (index >= 0 && index < size) {
+        delete data[index];
+        
+        for (int i = index; i < size - 1; i++) {
+            data[i] = data[i + 1];
+        }
+        data[size - 1] = nullptr;
+        size--;
+    }
+}
+
+Figure* Array::operator[](int index) const {
+    if (index >= 0 && index < size) {
+        return data[index];
+    }
+    return nullptr;
+}
+
+bool Array::empty() const {
+    return size == 0;
+}
+
+int Array::getSize() const {
+    return size;
+}
+
+void Array::clear() {
+    for (int i = 0; i < size; i++) {
+        delete data[i];
+        data[i] = nullptr;
+    }
+    size = 0;
 }

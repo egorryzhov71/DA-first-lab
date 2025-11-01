@@ -1,5 +1,7 @@
+#ifndef TRS_H
+#define TRS_H
+
 #include <iostream>
-#include <vector>
 #include <utility>
 
 
@@ -25,7 +27,6 @@ class Figure{
 std::ostream& operator<<(std::ostream& os, const Figure& fig);
 std::istream& operator>>(std::istream& is, Figure& fig);
 
-double operator+(double value, const Figure& fig);
 
 class Square : public Figure {
     private:
@@ -83,3 +84,27 @@ class Trapezoid : public Figure {
         void readData(std::istream& is) override;
 
 };
+
+class Array {
+private:
+    Figure** data;   
+    int capacity;    
+    int size;      
+    
+    void resize();  
+    
+public:
+    Array();
+    Array(const Array& other);     
+    Array& operator=(const Array& other);
+    ~Array();
+    
+    void push_back(Figure* figure);      
+    void erase(int index);     
+    Figure* operator[](int index) const; 
+    bool empty() const;
+    int getSize() const;
+    void clear();
+};
+
+#endif

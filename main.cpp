@@ -1,9 +1,8 @@
 #include "/workspaces/C++/include/TRS.h"
 #include <iostream>
-#include <vector>
 
 int main() {
-    std::vector<Figure*> figures;
+    Array figures;
     int choice;
     
     std::cout << "=== СИСТЕМА УПРАВЛЕНИЯ ФИГУРАМИ ===" << std::endl;
@@ -50,7 +49,7 @@ int main() {
                     std::cout << "Нет фигур для отображения." << std::endl;
                 } else {
                     std::cout << "\n=== ИНФОРМАЦИЯ О ФИГУРАХ ===" << std::endl;
-                    for (size_t i = 0; i < figures.size(); i++) {
+                    for (int i = 0; i < figures.getSize(); i++) {
                         std::cout << "\n--- Фигура " << i << " ---" << std::endl;
                         auto center = figures[i]->getCenter();
                         std::cout << "Геометрический центр: (" << center.first << ", " << center.second << ")" << std::endl;
@@ -65,8 +64,8 @@ int main() {
                     std::cout << "Нет фигур для вычисления площади." << std::endl;
                 } else {
                     double total = 0;
-                    for (auto fig : figures) {
-                        total += fig->area();
+                    for (int i = 0; i < figures.getSize(); i++) {
+                        total += figures[i]->area();
                     }
                     std::cout << "Общая площадь всех фигур: " << total << std::endl;
                 }
@@ -77,11 +76,10 @@ int main() {
                     std::cout << "Нет фигур для удаления." << std::endl;
                 } else {
                     int index;
-                    std::cout << "Введите индекс фигуры для удаления (0-" << figures.size()-1 << "): ";
+                    std::cout << "Введите индекс фигуры для удаления (0-" << figures.getSize()-1 << "): ";
                     std::cin >> index;
-                    if (index >= 0 && index < figures.size()) {
-                        delete figures[index];
-                        figures.erase(figures.begin() + index);
+                    if (index >= 0 && index < figures.getSize()) {
+                        figures.erase(index);
                         std::cout << "Фигура удалена!" << std::endl;
                     } else {
                         std::cout << "Неверный индекс!" << std::endl;
@@ -96,11 +94,6 @@ int main() {
                 std::cout << "Неверный выбор!" << std::endl;
         }
     } while (choice != 0);
-    
-    // Очистка памяти
-    for (auto fig : figures) {
-        delete fig;
-    }
     
     return 0;
 }

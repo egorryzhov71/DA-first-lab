@@ -1,0 +1,3 @@
+/workspaces/C++/lab4/build/CMakeFiles/main.dir
+/workspaces/C++/lab4/build/CMakeFiles/edit_cache.dir
+/workspaces/C++/lab4/build/CMakeFiles/rebuild_cache.dir
