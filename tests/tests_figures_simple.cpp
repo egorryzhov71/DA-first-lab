@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include "/workspaces/C++/include/TRS.h"
-#include <vector>
 #include <sstream>
 
 TEST(FigureTest, SquareAreaAndCenter) {
@@ -82,55 +81,62 @@ TEST(FigureTest, OutputOperator) {
     EXPECT_TRUE(output.find("Square") != std::string::npos);
 }
 
+
 TEST(FigureTest, ArrayOperations) {
-    std::vector<Figure*> figures;
+    Array figures; 
     
     figures.push_back(new Square(0, 0, 2));
     figures.push_back(new Rectangle(0, 0, 3, 4));
     figures.push_back(new Trapezoid(0, 0, 2, 4, 3));
     
-    EXPECT_EQ(figures.size(), 3);
+    EXPECT_EQ(figures.getSize(), 3); 
     
     double total = 0;
-    for (auto fig : figures) {
-        total += fig->area();
+    for (int i = 0; i < figures.getSize(); i++) {
+        total += figures[i]->area(); 
     }
     EXPECT_EQ(total, 25);
     
-    for (auto fig : figures) {
-        delete fig;
-    }
+   
 }
 
 TEST(FigureTest, RemoveFromArray) {
-    std::vector<Figure*> figures;
+    Array figures; 
     
     figures.push_back(new Square(0, 0, 2));
     figures.push_back(new Rectangle(0, 0, 3, 4));
     
-    EXPECT_EQ(figures.size(), 2);
+    EXPECT_EQ(figures.getSize(), 2);
     
-    delete figures[0];
-    figures.erase(figures.begin());
+    figures.erase(0); 
     
-    EXPECT_EQ(figures.size(), 1);
+    EXPECT_EQ(figures.getSize(), 1);
     EXPECT_EQ(figures[0]->area(), 12);
     
-    delete figures[0];
 }
 
 TEST(FigureTest, Polymorphism) {
-    Square* square = new Square(0, 0, 5);
-    Rectangle* rectangle = new Rectangle(0, 0, 4, 6);
+    Array figures;
     
-    Figure* fig1 = square;
-    Figure* fig2 = rectangle;
+    figures.push_back(new Square(0, 0, 5));
+    figures.push_back(new Rectangle(0, 0, 4, 6));
     
-    EXPECT_EQ(fig1->area(), 25);
-    EXPECT_EQ(fig2->area(), 24);
+    EXPECT_EQ(figures[0]->area(), 25);
+    EXPECT_EQ(figures[1]->area(), 24);
     
-    delete square;
-    delete rectangle;
+
+}
+
+TEST(FigureTest, ArrayEmptyAndClear) {
+    Array figures;
+    
+    EXPECT_TRUE(figures.empty()); 
+    
+    figures.push_back(new Square(0, 0, 2));
+    EXPECT_FALSE(figures.empty());
+    EXPECT_EQ(figures.getSize(), 1);
+    
+
 }
 
 int main(int argc, char **argv) {

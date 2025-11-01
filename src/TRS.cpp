@@ -207,8 +207,6 @@ Array::Array() : capacity(10), size(0) {
 Array::Array(const Array& other) : capacity(other.capacity), size(other.size) {
     data = new Figure*[capacity];
     for (int i = 0; i < size; i++) {
-        // Создаем копии фигур (нужно реализовать клонирование)
-        // Пока просто копируем указатели (осторожно с владением!)
         data[i] = other.data[i];
     }
     for (int i = size; i < capacity; i++) {
@@ -218,11 +216,9 @@ Array::Array(const Array& other) : capacity(other.capacity), size(other.size) {
 
 Array& Array::operator=(const Array& other) {
     if (this != &other) {
-        // Освобождаем старую память
         clear();
         delete[] data;
         
-        // Копируем данные
         capacity = other.capacity;
         size = other.size;
         data = new Figure*[capacity];
