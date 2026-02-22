@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/figures_program.dir/main.cpp.o CMakeFiles/figures_program.dir/src/TRS.cpp.o -o figures_program 

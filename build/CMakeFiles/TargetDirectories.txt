@@ -1,5 +1,0 @@
-/workspaces/C++/build/CMakeFiles/figures_program.dir
-/workspaces/C++/build/CMakeFiles/figures_tests.dir
-/workspaces/C++/build/CMakeFiles/test.dir
-/workspaces/C++/build/CMakeFiles/edit_cache.dir
-/workspaces/C++/build/CMakeFiles/rebuild_cache.dir

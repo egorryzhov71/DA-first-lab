@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/figures_tests.dir/tests/tests_figures_simple.cpp.o CMakeFiles/figures_tests.dir/src/TRS.cpp.o -o figures_tests  -lpthread /usr/lib/x86_64-linux-gnu/libgtest_main.a /usr/lib/x86_64-linux-gnu/libgtest.a 
