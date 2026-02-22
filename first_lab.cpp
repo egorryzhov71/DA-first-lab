@@ -1,65 +1,147 @@
-#include <vector>
-#include <iostream>
-#include <algorithm>
-#include <string>
+#include <stdio.h> 
 #include <iomanip>
 
 
+namespace NSorting{
+    const double RANGE_MIN= - 100.0;
+    const int STRING_CAPACITY = 65;
+    const double RANGE_MAX = 100.0;
+    const double RANGE = 200.0;
+    const int BUCKETS_COUNT = 2000;
 
-struct Item{
-    double key;
-    std::string value;
-};
-
-
-
-void bucketSort(std::vector<Item>& data){
-    int n = data.size();
-    if (n <= 1) return;
-
-    std::vector<std::vector<Item>> buckets(n);
-
-    double min_range = -100;
-    double max_range = 100;
-    double range =  max_range - min_range;
-
-    for (const auto& item: data ) {
-        int bucketIndex = static_cast<int>((item.key - min_range) / range * (n - 1));
-        if (bucketIndex < 0) bucketIndex = 0;
-        if (bucketIndex >= n) bucketIndex = n - 1;
-
-        buckets[bucketIndex].push_back(item);
-    }
+    typedef struct TItem
+{
+    double Key;
+    char Value[STRING_CAPACITY];
+    struct TItem* Next;
+}; TItem;
 
 
-    data.clear();
 
-    for (int i = 0; i < n; i++){
-        std::stable_sort(buckets[i].begin(), buckets[i].end(), [](const Item &a, const Item &b){
-            return a.key - b.key;
-        });
+    class IBucketSorter{
+        public:
+            virtual void AddItem(double key, const char* value) = 0;
+            virtual void Sort() = 0;
+            virtual void Print() = 0;
+            virtual ~IBucketSorter() {}   
+    };
 
-        for(const auto& item : buckets[i]){
-            data.push_back(item);
+    class TBucketSorter : public IBucketSorter {
+        public:
+        TBucketSorter(){
+            Buckets = new TItem*[BUCKETS_COUNT];
+
+            for (int i = 0; i < BUCKETS_COUNT; i++){
+                Buckets[i] = nullptr;
+            }
         }
-    }
+
+        ~TBucketSorter(){
+            for (int i = 0; i < BUCKETS_COUNT; i++){
+                TItem* current = Buckets[i];
+                while (current != nullptr){
+                    TItem* temp = current;
+                    current = current -> Next;
+                    delete temp;
+                }
+            }
+           delete[] Buckets;
+        }
+
+
+        void AddItem(double key, const char* value) override{
+            int index = CalculateIndex(key);
+
+            TItem* newItem = new TItem;
+            newItem->Key = key;
+
+            for (int i = 0; i < STRING_CAPACITY - 1; i++){
+                newItem->Value[i] = value[i];
+                if (value[i] == '\0'){
+                    break;
+                }
+            }
+            newItem -> Value[STRING_CAPACITY - 1] = '\0';
+
+            newItem->Next = Buckets[index];
+            Buckets[index] = newItem;
+        }
+
+
+        void Sort() override{
+            for (int i = 0; i < BUCKETS_COUNT; i++){
+                if (Buckets[i] != nullptr){
+                    Buckets[i] = InsertionSortList(Buckets[i]);
+                }
+            }
+        }
+
+        void Print() override{
+            for (int i = 0; i < BUCKETS_COUNT; i++){
+                TItem* current = Buckets[i];
+                while (current != nullptr){
+                    printf("%g/t%s/n", current->Key, current->Value);
+                    current = current -> Next;
+                }
+            }
+        }
+
+
+        private:
+
+            TItem** Buckets;
+
+            int CalculateIndex(double key){
+                double normalized = (key - RANGE_MIN) / RANGE;
+                if (normalized < 0.0){
+                    normalized = 0.0;
+                }
+                if (normalized >= 1.0){
+                    normalized = 0.99999;
+                }
+                return static_cast<int>(normalized * BUCKETS_COUNT);
+            }
+
+            TItem* InsertionSortList(TItem* head){
+                if (head == nullptr || head->Next == nullptr){
+                    return head;
+                }
+                TItem* sorted = nullptr;
+                TItem* current = head;
+
+                while (current != nullptr){
+                    TItem* next = current -> Next;
+
+                    if (sorted == nullptr || sorted->Key >= current->Key){
+                        current-> Next = sorted;
+                        sorted = current;
+                    } else {
+                        TItem* search = sorted;
+                        while (search -> Next != nullptr && search->Next->Key < current->Key){
+                            search = search->Next;
+                        }
+                        current->Next = search->Next;
+                        search->Next = current;
+                }
+                current = next;
+            }
+            return sorted;
+        }
+    };
 }
 
-
 int main(){
+    NSorting::TBucketSorter sorter;
 
-    std::vector<Item> items;
-    double k;
-    std::string v;
+    double tempKey;
+    char tempValue[NSorting::STRING_CAPACITY];
 
-    while (std::cin >> k){
-        std::getline(std::cin>> std::ws, v);
-        items.push_back({k, v});
+    while(scanf("%lf\t%64[^\n]", &tempKey, tempValue) != EOF){
+        sorter.AddItem(tempKey, tempValue);
     }
+    sorter.Sort();
+    
+    sorter.Print();
 
-    bucketSort(items);
-
-    for (const auto& item : items){
-        std::cout << item.key << "\t" << item.value << "\n";
-    }
+    return 0;
 }
